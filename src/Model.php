@@ -2,6 +2,8 @@
 
 namespace StringPhp\Models;
 
+use BackedEnum;
+use JsonSerializable;
 use LogicException;
 use ReflectionAttribute;
 use ReflectionClass;
@@ -12,8 +14,84 @@ use StringPhp\Models\DataTypes\NativeType;
 use StringPhp\Models\Exception\InvalidValue;
 use StringPhp\Models\Exception\MissingRequiredValue;
 
-abstract class Model
+abstract class Model implements JsonSerializable
 {
+    public function jsonSerialize(bool $withSensitiveProperties = false): array
+    {
+        $sensitiveParams = (function (): array {
+            $params = [];
+
+            $reflection = new ReflectionClass($this);
+
+            foreach ($reflection->getProperties() as $property) {
+                $attributes = $property->getAttributes(SensitiveProperty::class, ReflectionAttribute::IS_INSTANCEOF);
+
+                if (empty($attributes)) {
+                    continue;
+                }
+
+                $params[] = $property->getName();
+            }
+
+            return $params;
+        })();
+
+        $vars = array_filter(get_object_vars($this), static function (string $key) use ($sensitiveParams): bool {
+            return !in_array($key, $sensitiveParams, true);
+        }, ARRAY_FILTER_USE_KEY);
+
+        $vars = [];
+
+        foreach (get_object_vars($this) as $key => $var) {
+            if (!$withSensitiveProperties && in_array($key, $sensitiveParams)) {
+                continue;
+            }
+
+            if ($var instanceof JsonSerializable) {
+                $value = $var->jsonSerialize();
+            } else if ($var instanceof BackedEnum) {
+                $value = $var->value;
+            } else {
+                $value = $var;
+            }
+
+            $vars[$key] = $value;
+        }
+
+        return $vars;
+    }
+
+    public function fill(array $fields, array $allowedKeys = []): void
+    {
+        $serialized = $this->jsonSerialize(true);
+
+        foreach ($fields as $key => $value) {
+            if (
+                !property_exists($this, $key) ||
+                (!empty($allowedKeys) && !in_array($key, $allowedKeys))
+            ) {
+                continue;
+            }
+
+            $serialized[$key] = $value;
+        }
+
+        /** @var self $remapped */
+        $remapped = static::map($serialized);
+
+        foreach ($fields as $key => $value) {
+            if (
+                !property_exists($this, $key) ||
+                (!empty($allowedKeys) && !in_array($key, $allowedKeys)) ||
+                (!isset($remapped->{$key}) && $value !== null)
+            ) {
+                continue;
+            }
+
+            $this->{$key} = $remapped?->{$key} ?? $value;
+        }
+    }
+
     public static function map(array $data): static
     {
         $reflection = new ReflectionClass(static::class);
@@ -91,5 +169,30 @@ abstract class Model
         }
 
         return $instance;
+    }
+
+    /**
+     * @return array Values that have changed
+     */
+    public function compare(self $model): array
+    {
+        $changedFieldNames = [];
+
+        foreach ((new ReflectionClass(static::class))->getProperties() as $property) {
+            $propertyName = $property->getName();
+
+            if (
+                (isset($model->{$propertyName}) !== isset($this->{$propertyName})) ||
+                (
+                    isset($model->{$propertyName}) &&
+                    isset($this->{$propertyName}) &&
+                    ($model->{$propertyName} !== $this->{$propertyName})
+                )
+            ) {
+                $changedFieldNames[] = $propertyName;
+            }
+        }
+
+        return $changedFieldNames;
     }
 }
