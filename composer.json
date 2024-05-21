@@ -23,11 +23,5 @@
     "scripts": {
         "fix": "php-cs-fixer fix --using-cache=no",
         "fix:dry": "php-cs-fixer fix --using-cache=no --diff --dry-run"
-    },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../../stringphp/**"
-        }
-    ]
+    }
 }
