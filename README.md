@@ -1,3 +1,3 @@
-# StringPhp/Package
+# StringPhp/Models
 
 **TODO: Create documentation**
