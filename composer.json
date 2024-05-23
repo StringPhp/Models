@@ -15,7 +15,8 @@
         }
     ],
     "require": {
-        "php": "^8.3"
+        "php": "^8.3",
+        "stringphp/utils": "dev-main"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.16"

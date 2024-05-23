@@ -10,6 +10,7 @@ use ReflectionClass;
 use ReflectionUnionType;
 use StringPhp\Models\DataTypes\AnyType;
 use StringPhp\Models\DataTypes\DataType;
+use StringPhp\Models\DataTypes\EnumType;
 use StringPhp\Models\DataTypes\NativeType;
 use StringPhp\Models\Exception\InvalidValue;
 use StringPhp\Models\Exception\MissingRequiredValue;
@@ -132,6 +133,8 @@ abstract class Model implements JsonSerializable
                                 default => throw new LogicException('Invalid type')
                             }
                         );
+                    } else if (is_subclass_of($type->getName(), BackedEnum::class)) {
+                        $acceptedTypes[] = new EnumType($type->getName());
                     } else {
                         $acceptedTypes[] = new AnyType();
                     }
@@ -141,8 +144,7 @@ abstract class Model implements JsonSerializable
             foreach ($acceptedTypes as $type) {
                 if (
                     !$propertySet &&
-                    $type->isRequired() &&
-                    !$property->getType()->allowsNull()
+                    $type->isRequired()
                 ) {
                     throw new MissingRequiredValue($instance::class, $propertyName);
                 } elseif (!$propertySet) {

@@ -5,6 +5,8 @@ namespace StringPhp\Models\DataTypes;
 use Attribute;
 use InvalidArgumentException;
 use Override;
+use StringPhp\Models\Exception\InvalidValue;
+use StringPhp\Models\Exception\MissingRequiredValue;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class ModelType extends DataType
@@ -23,6 +25,13 @@ class ModelType extends DataType
     #[Override]
     public function isType(mixed $value): bool
     {
-        return $value instanceof $this->className;
+        return ($value instanceof $this->className || is_array($value));
+    }
+
+    public function beforeMap(mixed &$value): void
+    {
+        if (is_array($value)) {
+            $value = [$this->className, 'map']($value);
+        }
     }
 }

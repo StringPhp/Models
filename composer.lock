@@ -4,8 +4,56 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5ac0380918ea02779a736d8efcb59c66",
-    "packages": [],
+    "content-hash": "42891451d0b890939af6c53ef4c88c1b",
+    "packages": [
+        {
+            "name": "stringphp/utils",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/StringPhp/Utils.git",
+                "reference": "da0104e52c9af5b9fc0e2a47f4f9626ab207bceb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/StringPhp/Utils/zipball/da0104e52c9af5b9fc0e2a47f4f9626ab207bceb",
+                "reference": "da0104e52c9af5b9fc0e2a47f4f9626ab207bceb",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.3"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.16"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/functions.php"
+                ],
+                "psr-4": {
+                    "StringPhp\\Utils\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Robert Snedeker",
+                    "email": "rsnedeker20@gmail.com"
+                }
+            ],
+            "description": "StringPhp utility functions",
+            "support": {
+                "issues": "https://github.com/StringPhp/Utils/issues",
+                "source": "https://github.com/StringPhp/Utils/tree/main"
+            },
+            "time": "2024-05-23T15:27:14+00:00"
+        }
+    ],
     "packages-dev": [
         {
             "name": "clue/ndjson-react",
@@ -399,16 +447,16 @@
         },
         {
             "name": "friendsofphp/php-cs-fixer",
-            "version": "v3.57.1",
+            "version": "v3.57.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer.git",
-                "reference": "3f7efe667a8c9818aacceee478add7c0fc24cb21"
+                "reference": "22f7f3145606df92b02fb1bd22c30abfce956d3c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/3f7efe667a8c9818aacceee478add7c0fc24cb21",
-                "reference": "3f7efe667a8c9818aacceee478add7c0fc24cb21",
+                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/22f7f3145606df92b02fb1bd22c30abfce956d3c",
+                "reference": "22f7f3145606df92b02fb1bd22c30abfce956d3c",
                 "shasum": ""
             },
             "require": {
@@ -487,7 +535,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/issues",
-                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.57.1"
+                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.57.2"
             },
             "funding": [
                 {
@@ -495,7 +543,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-05-15T22:01:07+00:00"
+            "time": "2024-05-20T20:41:57+00:00"
         },
         {
             "name": "psr/container",
@@ -2527,7 +2575,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "stringphp/utils": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

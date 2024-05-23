@@ -8,11 +8,10 @@ use Attribute;
 class ArrayType extends DataType
 {
     public function __construct(
-        public readonly DataType $type,
-        bool $required = true
+        public readonly DataType $type
     )
     {
-        parent::__construct($required);
+        parent::__construct($type->required);
     }
 
     public function isType(mixed $value): bool
