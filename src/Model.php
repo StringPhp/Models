@@ -36,10 +36,6 @@ abstract class Model implements JsonSerializable
             return $params;
         })();
 
-        $vars = array_filter(get_object_vars($this), static function (string $key) use ($sensitiveParams): bool {
-            return !in_array($key, $sensitiveParams, true);
-        }, ARRAY_FILTER_USE_KEY);
-
         $vars = [];
 
         foreach (get_object_vars($this) as $key => $var) {

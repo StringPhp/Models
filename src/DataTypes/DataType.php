@@ -4,10 +4,24 @@ namespace StringPhp\Models\DataTypes;
 
 abstract class DataType
 {
+    public function __construct(
+        public readonly bool $required = true
+    ) {
+
+    }
+
     abstract public function isType(mixed $value): bool;
 
-    abstract public function isRequired(): bool;
+    public function isRequired(): bool {
+        return $this->required;
+    }
 
+    /**
+     * Do any final serialization before mapping
+     *
+     * @param mixed $value
+     * @return void
+     */
     public function beforeMap(mixed &$value): void
     {
 

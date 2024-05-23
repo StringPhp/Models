@@ -15,9 +15,9 @@ class NativeType extends DataType
 
     public function __construct(
         public readonly int $type,
-        public readonly bool $required = true
+        bool $required = true
     ) {
-
+        parent::__construct($required);
     }
 
     public function isType(mixed $value): bool
@@ -30,10 +30,5 @@ class NativeType extends DataType
             self::NULL => $value === null,
             default => false,
         };
-    }
-
-    public function isRequired(): bool
-    {
-        return $this->required;
     }
 }

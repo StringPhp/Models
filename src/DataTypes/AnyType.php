@@ -3,13 +3,15 @@
 namespace StringPhp\Models\DataTypes;
 
 use Override;
+use Attribute;
 
+#[Attribute(Attribute::TARGET_PROPERTY)]
 class AnyType extends DataType
 {
     public function __construct(
-        public readonly bool $required = true
+        bool $required = true
     ) {
-
+        parent::__construct($required);
     }
 
     #[Override]
