@@ -1,6 +1,6 @@
 {
     "name": "stringphp/models",
-    "description": "Package description",
+    "description": "A collection of helpers for creating abstractions of data models in PHP.",
     "type": "library",
     "license": "MIT",
     "autoload": {
@@ -16,7 +16,7 @@
     ],
     "require": {
         "php": "^8.3",
-        "stringphp/utils": "dev-main"
+        "stringphp/utils": "^v0.0.2"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.16"
