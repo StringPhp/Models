@@ -38,6 +38,11 @@ abstract class Model
         return $params;
     }
 
+    protected function getVars(): array
+    {
+        return get_object_vars($this);
+    }
+
     /**
      * Serializes the object to an array that can be used for JSON serialization
      *
@@ -49,7 +54,7 @@ abstract class Model
         $sensitiveParams = $this->getSensitiveParams();
         $vars = [];
 
-        foreach (get_object_vars($this) as $key => $var) {
+        foreach ($this->getVars() as $key => $var) {
             if (!$withSensitiveProperties && in_array($key, $sensitiveParams)) {
                 continue;
             }
@@ -72,7 +77,7 @@ abstract class Model
 
     public function fill(array $fields, array $allowedKeys = []): void
     {
-        $serialized = $this->jsonSerialize(true);
+        $serialized = $this->arraySerialize(true);
 
         foreach ($fields as $key => $value) {
             if (

@@ -25,7 +25,7 @@ class JsonModel extends Model implements JsonSerializable
         $sensitiveParams = $this->getSensitiveParams();
         $vars = [];
 
-        foreach (get_object_vars($this) as $key => $var) {
+        foreach ($this->getVars() as $key => $var) {
             $scKey = camelToSnakeCase($key);
 
             if (!$withSensitiveProperties && in_array($key, $sensitiveParams)) {
