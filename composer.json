@@ -8,6 +8,11 @@
             "StringPhp\\Models\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\StringPhp\\Models\\": "tests/"
+        }
+    },
     "authors": [
         {
             "name": "Robert Snedeker",
@@ -19,10 +24,18 @@
         "stringphp/utils": "^v0.0.2"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.16"
+        "friendsofphp/php-cs-fixer": "^3.16",
+        "pestphp/pest": "^2.34",
+        "fakerphp/faker": "^1.23"
     },
     "scripts": {
         "fix": "php-cs-fixer fix --using-cache=no",
-        "fix:dry": "php-cs-fixer fix --using-cache=no --diff --dry-run"
+        "fix:dry": "php-cs-fixer fix --using-cache=no --diff --dry-run",
+        "test": "pest"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     }
 }

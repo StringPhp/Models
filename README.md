@@ -1,3 +1,7 @@
 # StringPhp/Models
 
-**TODO: Create documentation**
+```
+composer require stringphp/models
+```
+
+More documentation available at [stringphp.com](https://stringphp.com/models)

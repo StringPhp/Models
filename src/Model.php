@@ -7,36 +7,46 @@ use JsonSerializable;
 use LogicException;
 use ReflectionAttribute;
 use ReflectionClass;
+use ReflectionException;
 use ReflectionUnionType;
 use StringPhp\Models\DataTypes\AnyType;
+use StringPhp\Models\DataTypes\ArrayType;
 use StringPhp\Models\DataTypes\DataType;
 use StringPhp\Models\DataTypes\EnumType;
 use StringPhp\Models\DataTypes\NativeType;
 use StringPhp\Models\Exception\InvalidValue;
 use StringPhp\Models\Exception\MissingRequiredValue;
+use StringPhp\Models\Exception\ModelException;
 
-abstract class Model implements JsonSerializable
+abstract class Model
 {
-    public function jsonSerialize(bool $withSensitiveProperties = false): array
+    public function getSensitiveParams(): array
     {
-        $sensitiveParams = (function (): array {
-            $params = [];
+        $params = [];
+        $reflection = new ReflectionClass($this);
 
-            $reflection = new ReflectionClass($this);
+        foreach ($reflection->getProperties() as $property) {
+            $attributes = $property->getAttributes(SensitiveProperty::class, ReflectionAttribute::IS_INSTANCEOF);
 
-            foreach ($reflection->getProperties() as $property) {
-                $attributes = $property->getAttributes(SensitiveProperty::class, ReflectionAttribute::IS_INSTANCEOF);
-
-                if (empty($attributes)) {
-                    continue;
-                }
-
-                $params[] = $property->getName();
+            if (empty($attributes)) {
+                continue;
             }
 
-            return $params;
-        })();
+            $params[] = $property->getName();
+        }
 
+        return $params;
+    }
+
+    /**
+     * Serializes the object to an array that can be used for JSON serialization
+     *
+     * @param bool $withSensitiveProperties
+     * @return array
+     */
+    public function arraySerialize(bool $withSensitiveProperties = false): array
+    {
+        $sensitiveParams = $this->getSensitiveParams();
         $vars = [];
 
         foreach (get_object_vars($this) as $key => $var) {
@@ -44,7 +54,9 @@ abstract class Model implements JsonSerializable
                 continue;
             }
 
-            if ($var instanceof JsonSerializable) {
+            if ($var instanceof static) {
+                $value = $var->arraySerialize($withSensitiveProperties);
+            } else if ($var instanceof JsonSerializable) {
                 $value = $var->jsonSerialize();
             } else if ($var instanceof BackedEnum) {
                 $value = $var->value;
@@ -89,10 +101,24 @@ abstract class Model implements JsonSerializable
         }
     }
 
+    /**
+     * Maps an array to a model
+     *
+     * @param array $data
+     * @return static
+     *
+     * @throws InvalidValue|MissingRequiredValue|ModelException
+     */
     public static function map(array $data): static
     {
         $reflection = new ReflectionClass(static::class);
-        $instance = $reflection->newInstanceWithoutConstructor();
+
+        try {
+            $instance = $reflection->newInstanceWithoutConstructor();
+        } catch (ReflectionException $e) {
+            throw new ModelException('Failed to map model ' . static::class, previous: $e);
+        }
+
         $properties = $reflection->getProperties();
 
         foreach ($properties as $property) {
@@ -105,9 +131,6 @@ abstract class Model implements JsonSerializable
                 static fn (ReflectionAttribute $type) => $type->newInstance(),
                 $property->getAttributes(DataType::class, ReflectionAttribute::IS_INSTANCEOF)
             );
-
-            $propertySet = isset($data[$propertyName]);
-            $mappedProperty = false;
 
             if (empty($acceptedTypes)) {
                 $dataType = $property->getType();
@@ -135,11 +158,16 @@ abstract class Model implements JsonSerializable
                         );
                     } else if (is_subclass_of($type->getName(), BackedEnum::class)) {
                         $acceptedTypes[] = new EnumType($type->getName());
+                    } else if ($type->getName() === 'array') {
+                        $acceptedTypes[] = new ArrayType(new AnyType());
                     } else {
                         $acceptedTypes[] = new AnyType();
                     }
                 }
             }
+
+            $propertySet = array_key_exists($propertyName, $data);
+            $mappedProperty = false;
 
             foreach ($acceptedTypes as $type) {
                 if (
