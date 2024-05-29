@@ -7,8 +7,8 @@ use JsonSerializable;
 use LogicException;
 use StringPhp\Models\Exception\InvalidValue;
 use StringPhp\Models\Exception\MissingRequiredValue;
-
 use StringPhp\Models\Exception\ModelException;
+
 use function StringPhp\Utils\camelToSnakeCase;
 use function StringPhp\Utils\snakeToCamelCase;
 
@@ -70,5 +70,22 @@ class JsonModel extends Model implements JsonSerializable
         }
 
         return parent::map($data);
+    }
+
+    /**
+     * Fills model with a snake_case JSON array.
+     */
+    public function fillFromJson(array $data, array $allowedKeys = []): void
+    {
+        foreach ($data as $key => $value) {
+            $ccKey = snakeToCamelCase($key);
+
+            if (property_exists($this, $ccKey)) {
+                $data[$ccKey] = $value;
+                unset($data[$key]);
+            }
+        }
+
+        $this->fill($data, $allowedKeys);
     }
 }
