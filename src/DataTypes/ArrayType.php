@@ -9,8 +9,7 @@ class ArrayType extends DataType
 {
     public function __construct(
         public readonly DataType $type
-    )
-    {
+    ) {
         parent::__construct($type->required);
     }
 

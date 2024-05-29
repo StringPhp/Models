@@ -16,9 +16,6 @@ class JsonModel extends Model implements JsonSerializable
 {
     /**
      * Converts the model to a snake_case JSON serializable array.
-     *
-     * @param bool $withSensitiveProperties
-     * @return array
      */
     public function jsonSerialize(bool $withSensitiveProperties = false): array
     {
@@ -34,11 +31,11 @@ class JsonModel extends Model implements JsonSerializable
 
             if ($var instanceof Model && !class_parents($var, self::class)) {
                 throw new LogicException('Nested models should extend JsonModel if they are to be serialized');
-            } else if ($var instanceof self) {
+            } elseif ($var instanceof self) {
                 $value = $var->jsonSerialize($withSensitiveProperties);
-            } else if ($var instanceof JsonSerializable) {
+            } elseif ($var instanceof JsonSerializable) {
                 $value = $var->jsonSerialize();
-            } else if ($var instanceof BackedEnum) {
+            } elseif ($var instanceof BackedEnum) {
                 $value = $var->value;
             } else {
                 $value = $var;
@@ -53,10 +50,9 @@ class JsonModel extends Model implements JsonSerializable
     /**
      * Maps model from a snake_case JSON array.
      *
-     * @param array $data
-     * @return self
-     *
      * @throws InvalidValue|MissingRequiredValue|ModelException
+     *
+     * @return self
      */
     public static function mapFromJson(array $data): static
     {
@@ -80,7 +76,7 @@ class JsonModel extends Model implements JsonSerializable
         foreach ($data as $key => $value) {
             $ccKey = snakeToCamelCase($key);
 
-            if (property_exists($this, $ccKey)) {
+            if (property_exists($this, $ccKey) && $key !== $ccKey) {
                 $data[$ccKey] = $value;
                 unset($data[$key]);
             }

@@ -12,15 +12,13 @@ abstract class DataType
 
     abstract public function isType(mixed $value): bool;
 
-    public function isRequired(): bool {
+    public function isRequired(): bool
+    {
         return $this->required;
     }
 
     /**
      * Do any final serialization before mapping
-     *
-     * @param mixed $value
-     * @return void
      */
     public function beforeMap(mixed &$value): void
     {

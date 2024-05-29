@@ -45,9 +45,6 @@ abstract class Model
 
     /**
      * Serializes the object to an array that can be used for JSON serialization
-     *
-     * @param bool $withSensitiveProperties
-     * @return array
      */
     public function arraySerialize(bool $withSensitiveProperties = false): array
     {
@@ -61,9 +58,9 @@ abstract class Model
 
             if ($var instanceof static) {
                 $value = $var->arraySerialize($withSensitiveProperties);
-            } else if ($var instanceof JsonSerializable) {
+            } elseif ($var instanceof JsonSerializable) {
                 $value = $var->jsonSerialize();
-            } else if ($var instanceof BackedEnum) {
+            } elseif ($var instanceof BackedEnum) {
                 $value = $var->value;
             } else {
                 $value = $var;
@@ -109,8 +106,6 @@ abstract class Model
     /**
      * Maps an array to a model
      *
-     * @param array $data
-     * @return static
      *
      * @throws InvalidValue|MissingRequiredValue|ModelException
      */
@@ -161,9 +156,9 @@ abstract class Model
                                 default => throw new LogicException('Invalid type')
                             }
                         );
-                    } else if (is_subclass_of($type->getName(), BackedEnum::class)) {
+                    } elseif (is_subclass_of($type->getName(), BackedEnum::class)) {
                         $acceptedTypes[] = new EnumType($type->getName());
-                    } else if ($type->getName() === 'array') {
+                    } elseif ($type->getName() === 'array') {
                         $acceptedTypes[] = new ArrayType(new AnyType());
                     } else {
                         $acceptedTypes[] = new AnyType();

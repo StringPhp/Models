@@ -9,12 +9,11 @@ use InvalidArgumentException;
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class EnumType extends DataType
 {
-    /** @var class-string<BackedEnum> $enum */
+    /** @var class-string<BackedEnum> */
     public readonly string $enum;
 
     /**
      * @param class-string<BackedEnum> $enum
-     * @param bool $required
      */
     public function __construct(
         string $enum,
@@ -23,7 +22,7 @@ class EnumType extends DataType
         $this->enum = $enum;
 
         if (!class_exists($this->enum) || !is_subclass_of($this->enum, BackedEnum::class)) {
-            throw new InvalidArgumentException("EnumType must be an instance of BackedEnum and must exist.");
+            throw new InvalidArgumentException('EnumType must be an instance of BackedEnum and must exist.');
         }
 
         parent::__construct($required);
@@ -31,7 +30,7 @@ class EnumType extends DataType
 
     public function isType(mixed $value): bool
     {
-        if ($value instanceof $this->enum || [$this->enum, 'tryFrom']($value) !== null){
+        if ($value instanceof $this->enum || [$this->enum, 'tryFrom']($value) !== null) {
             return true;
         }
 
