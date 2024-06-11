@@ -29,7 +29,7 @@ class ModelType extends DataType
 
     public function beforeMap(mixed &$value): void
     {
-        if (in_array(JsonModel::class, class_parents($this->className))) {
+        if (in_array(JsonModel::class, class_parents($this->className)) && is_array($value)) {
             $value = [$this->className, 'mapFromJson']($value);
         } else if (is_array($value)) {
             $value = [$this->className, 'map']($value);
