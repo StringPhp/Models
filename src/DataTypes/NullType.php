@@ -9,6 +9,6 @@ class NullType extends NativeType
 {
     public function __construct(bool $required = true)
     {
-        parent::__construct(NativeType::null, $required);
+        parent::__construct(NativeType::NULL, $required);
     }
 }
