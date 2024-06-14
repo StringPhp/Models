@@ -27,7 +27,7 @@ class NativeType extends DataType
             self::INT => is_int($value),
             self::FLOAT => is_float($value),
             self::BOOL => is_bool($value),
-            self::null => $value === null,
+            self::NULL => $value === null,
             default => false,
         };
     }
